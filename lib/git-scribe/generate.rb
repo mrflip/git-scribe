@@ -1,7 +1,21 @@
 class GitScribe
   module Generate
+
+    def output_types
+      @config['output_types']
+    end
+
+    def book_file
+      @config['book_file']
+    end
+
+    def output_book_file
+      File.join(repo_dir, 'output', book_file)
+    end
+
     # generate the new media
     def gen(args = [])
+      Log.debug{ "generate:"}
       @done = {}  # what we've generated already
 
       type = first_arg(args) || 'all'
@@ -9,29 +23,32 @@ class GitScribe
 
       gather_and_process
 
-      types = type == 'all' ? OUTPUT_TYPES : [type]
+      types = type == 'all' ? output_types : [type]
+      Log.debug{ "  types: #{types.join(', ')}"}
 
       ret = false
       output = []
       Dir.chdir("output") do
         types.each do |out_type|
-          call = 'do_' + out_type
-          if self.respond_to? call
-            ret = self.send call
-          else
-            die "NOT A THING: #{call}"
-          end
+          gen_type(out_type)
         end
         # clean up
-        `rm #{BOOK_FILE}`
+        FileUtils.rm output_book_file
         ret
       end
     end
 
+    def gen_type(out_type)
+      Log.debug{ "  running #{out_type}:"}
+      call = 'do_' + out_type
+      die "NOT A THING: #{call}" unless self.respond_to? call
+      self.send call
+    end
+
     def prepare_output_dir
-      Dir.mkdir('output') rescue nil
+      FileUtils.mkpath('output')
       Dir.chdir('output') do
-        Dir.mkdir('stylesheets') rescue nil
+        FileUtils.mkpath('stylesheets')
         from_stdir = File.join(SCRIBE_ROOT, 'stylesheets')
         FileUtils.cp_r from_stdir, '.'
       end
@@ -48,7 +65,7 @@ class GitScribe
     def do_docbook
       return true if @done['docbook']
       info "GENERATING DOCBOOK"
-      if ex("asciidoc -b docbook #{BOOK_FILE}")
+      if ex("asciidoc -b docbook #{book_file}")
         @done['docbook'] = true
         'book.xml'
       end
@@ -64,8 +81,8 @@ class GitScribe
         'admon.textlabel'  => 1,
         'admon.graphics'   => 0,
       }
-      run_xslt "-o #{local('book.fo')} #{local('book.xml')} #{base('docbook-xsl/fo.xsl')}", java_options
-      ex "fop -fo #{local('book.fo')} -pdf #{local('book.pdf')}"
+      run_xslt "-o #{local('output', 'book.fo')} #{local('output', 'book.xml')} #{base('docbook-xsl', 'fo.xsl')}", java_options
+      ex "fop -fo #{local('output', 'book.fo')} -pdf #{local('output', 'book.pdf')}"
 
       if $?.success?
         'book.pdf'
@@ -75,12 +92,14 @@ class GitScribe
     def do_epub
       info "GENERATING EPUB"
       # TODO: look for custom stylesheets
-      cmd = "#{a2x_wss('epub')} -v #{BOOK_FILE}"
+      cmd = "#{a2x_wss('epub')} -v #{book_file}"
       if ex(cmd)
         'book.epub'
       end
     end
 
+    # brew install https://raw.github.com/gist/3293350/kindlegen.rb
+    #
     def do_mobi
       do_html
       info "GENERATING MOBI"
@@ -96,8 +115,8 @@ class GitScribe
       return true if @done['html']
       info "GENERATING HTML"
       # TODO: look for custom stylesheets
-      stylesheet = local('stylesheets') + '/scribe.css'
-      cmd = "asciidoc -a stylesheet=#{stylesheet} #{BOOK_FILE}"
+      stylesheet = local('output', 'stylesheets', 'scribe.css')
+      cmd = "asciidoc -a stylesheet=#{stylesheet} #{book_file}"
       if ex(cmd)
         @done['html'] == true
         'book.html'
@@ -108,7 +127,7 @@ class GitScribe
       info "GENERATING SITE"
       # TODO: check if html was already done
 
-      ex "asciidoc -b docbook #{BOOK_FILE}"
+      ex       "asciidoc -b docbook #{book_file}"
       run_xslt "book.xml #{base('docbook-xsl/xhtml/chunk.xsl')}", "html.stylesheet" => 1
 
       source = File.read('index.html')
@@ -252,7 +271,7 @@ class GitScribe
       ncx = File.open('book.ncx', 'w+')
       ncx.puts('<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
-	"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+        "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en-US">
 <head>

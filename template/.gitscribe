@@ -1,7 +1,11 @@
 ---
-publish:  true
-edition:  0.1
-language: en
-version:  1.0
-author:   Your Name
-cover:    images/cover.jpg
+publish:        true
+edition:  	0.1
+language: 	en
+version:  	1.0
+author:   	Your Name
+cover:    	images/cover.jpg
+
+# book_file:    book.asc
+# verbose:      false
+# output_types: ['docbook', 'html', 'pdf', 'epub', 'mobi', 'site']

@@ -11,6 +11,13 @@ body {
 	max-width:53.8461538462em; /* 790px */
 	color:#333;
 }
+pre, code, tt {
+  font-family: 		Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Monaco, "Courier New", monospace;
+  color:		#000;
+  border-radius: 	3px;
+}
+code, tt {  font-size: 	13px; }
+pre      {  font-size: 	12px; }
 
 em {
 	font-style:italic;
@@ -19,13 +26,6 @@ em {
 strong {
 	font-weight:bold;
 	color:#000;
-}
-
-tt {
-	font-family:consolas, 'lucida console', 'bitstream vera sans mono',
-	           'courier new', monospace;
-	color:#000;
-  font-size: 10px;
 }
 
 p, ul, ol, dl {
@@ -115,18 +115,32 @@ h5 {
 }
 
 .listingblock .content {
-	border:1px solid silver;
-	background:#eee;
-	padding:5px;
-}
-
-.listingblock .content pre {
-	margin:0;
+  border:		none;
+  background:		transparent;
+  padding:		0px;
 }
 
 .literalblock .content {
-	margin-left:40px;
+  margin-left:		40px;
 }
+
+pre, .listingblock .content pre {
+  margin:		0;
+  border: 		1px solid #ccc;
+  background-color: 	#f8f8f8 ;
+  padding:		6px 10px;
+}
+
+tt, code {
+  margin: 		0px 2px;
+  background-color: 	#f8f8f8 ;
+  padding:		0px 3px;
+  white-space:		nowrap;
+  border: 		1px solid #eee;
+}
+/* "pre tt" are code blocks */
+pre tt, pre code { border: 0px none ; background-color: transparent; margin: 0; padding: 0; white-space: pre; }
+
 
 .verseblock .content {
 	white-space:pre
@@ -178,7 +192,6 @@ h5 {
 }
 
 .highlight { background: transparent; }
-pre, code { font-family: Courier; font-size: 12px; }
 pre { margin-bottom: 15px; }
 
 .pos-NN, .pos-NNP, .pos-NNS { color: green; }

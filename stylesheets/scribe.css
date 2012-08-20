@@ -4,20 +4,20 @@
 --------------------------------------------------------------------------- */
 
 body {
-	font-family:verdana,helvetica,arial,sans-serif;
-	font-size:81.25%;   /* 13px */
-	line-height:1.538;  /* 20px */
-	margin:40px auto 50px auto;
-	max-width:53.8461538462em; /* 790px */
-	color:#333;
+	font-family:	verdana,helvetica,arial,sans-serif;
+	font-size:	81.25%;   /* 13px */
+	line-height:	1.538;  /* 20px */
+	margin:		40px auto 50px auto;
+	max-width:	960px;
+	color:		#333;
 }
-pre, code, tt {
+pre, code, tt, span.monospaced {
   font-family: 		Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", Monaco, "Courier New", monospace;
   color:		#000;
   border-radius: 	3px;
 }
-code, tt {  font-size: 	13px; }
-pre      {  font-size: 	12px; }
+code, tt, span.monospaced {  font-size: 13px; }
+pre                       {  font-size: 12px; }
 
 em {
 	font-style:italic;
@@ -81,7 +81,7 @@ h5 {
 
 #header {
 	text-align:center;
-	margin-bottom:30px;
+	margin-botomt:30px;
 }
 
 #header h1 { margin-bottom:0 }
@@ -131,7 +131,7 @@ pre, .listingblock .content pre {
   padding:		6px 10px;
 }
 
-tt, code {
+tt, code, span.monospaced {
   margin: 		0px 2px;
   background-color: 	#f8f8f8 ;
   padding:		0px 3px;
